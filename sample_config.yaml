@@ -1,0 +1,5 @@
+criticalContexts:
+  - "*production*"
+  - "*prod*"
+verbs:
+  - "delete"
