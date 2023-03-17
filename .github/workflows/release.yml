@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.20
+
+    - name: Build Linux binary
+      env:
+        GOOS: linux
+        GOARCH: amd64
+      run: go build -o kubectl-confirm-linux-amd64 main.go
+
+    - name: Build Darwin binary
+      env:
+        GOOS: darwin
+        GOARCH: amd64
+      run: go build -o kubectl-confirm-darwin-amd64 main.go
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Linux binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./kubectl-confirm-linux-amd64
+        asset_name: kubectl-confirm-linux-amd64
+        asset_content_type: application/octet-stream
+
+    - name: Upload Darwin binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./kubectl-confirm-darwin-amd64
+        asset_name: kubectl-confirm-darwin-amd64
+        asset_content_type: application/octet-stream
