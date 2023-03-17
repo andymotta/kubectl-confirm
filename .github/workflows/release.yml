@@ -17,6 +17,9 @@ jobs:
       with:
         go-version: 1.20
 
+    - name: Download dependencies
+      run: go mod download
+
     - name: Build Linux binary
       env:
         GOOS: linux
