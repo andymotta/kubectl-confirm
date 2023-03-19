@@ -17,6 +17,11 @@ type Config struct {
 	Verbs            []string `yaml:"verbs"`
 }
 
+const (
+	red   = "\033[31m"
+	reset = "\033[0m"
+)
+
 func main() {
 	if len(os.Args) < 3 {
 		fmt.Println("Usage: kubectl-confirm <context> <verb>")
@@ -49,7 +54,7 @@ func main() {
 			os.Exit(1)
 		}
 		if g.Match(context) {
-			fmt.Printf("The context '%s' is critical and the verb '%s' is dangerous. Are you sure you want to proceed? (y/N): ", context, verb)
+			fmt.Printf("%sThe context '%s' is critical and the verb '%s' is dangerous. Are you sure you want to proceed? (y/N): %s", red, context, verb, reset)
 			reader := bufio.NewReader(os.Stdin)
 			input, _ := reader.ReadString('\n')
 			input = strings.TrimSpace(strings.ToLower(input))

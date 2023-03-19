@@ -30,14 +30,6 @@ jobs:
         GOARCH: amd64
       run: go build -o kubectl-confirm-darwin-amd64 main.go
 
-    - name: Generate commit history
-      run: |
-        #!/bin/bash
-        echo "Changes in this release:" > commit-history.txt
-        echo "" >> commit-history.txt
-        git log --pretty=format:"- %s" --no-merges origin/main...HEAD >> commit-history.txt
-        echo "" >> commit-history.txt
-
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -46,7 +38,6 @@ jobs:
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
-        body: $(cat commit-history.txt)
         draft: false
         prerelease: false
 
