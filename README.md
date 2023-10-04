@@ -12,7 +12,7 @@
         if [ $# -lt 1 ]; then
             command kubectl
         else
-            local context=$(command kubectl config current-context)
+            local context=$(command kubectl config current-context | cut -d/ -f2)
             kubectl-confirm "${context}" "$1"
             local exit_code=$?
             if [ $exit_code -eq 0 ]; then
